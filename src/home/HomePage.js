@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { styled } from "@mui/material/styles";
-import "./App.css";
+import "../App.css";
 import Button from "@mui/material/Button";
-import Navbar from "./components/Navbar";
+import NavBar from "../components/Navbar";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -19,13 +19,12 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function App() {
+function Home() {
   const [file, setFile] = useState(null);
   const [prediction, setPrediction] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [results, setResults] = useState([]);
   const [loadingChatGPT, setLoadingChatGPT] = useState(false);
-  const [loadingPrediction, setLoadingPrediction] = useState(false);
   const titles = [
     "Details:",
     "Symptoms:",
@@ -74,7 +73,7 @@ function App() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoadingPrediction(true);
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -87,7 +86,6 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setPrediction(data.prediction);
-        setLoadingPrediction(false);
         sendPredictionToAPI(data.prediction); // Send prediction to API
       } else {
         throw new Error("Request failed");
@@ -111,7 +109,7 @@ function App() {
 
   const sendPredictionToAPI = async (prediction) => {
     try {
-      setLoadingChatGPT(true);
+      setLoadingChatGPT(true)
       let command = `list out separately the details, symptoms, recommended treatments, and preventive measures of ${
         prediction.split("___")[1]
       } disease`;
@@ -119,7 +117,7 @@ function App() {
         prompt: command,
       });
       setResults(splitByTitles(response.data.completion));
-      setLoadingChatGPT(false);
+      setLoadingChatGPT(false)
       console.log(splitByTitles(response.data.completion));
     } catch (error) {
       console.log(error);
@@ -147,8 +145,8 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Navbar />
+    <div className="Home">
+      <NavBar />
 
       <div className="container">
         <div className="row">
@@ -204,18 +202,11 @@ function App() {
             </form>
             {prediction && (
               <div className="text-center mt-3">
-                <h4>With high confidence the disease is: </h4>{" "}
-                <h3>{prediction.replace("___", " ").replace("_", " ")}</h3>
+                <h4>With high confidence the disease is: </h4> <h3>{prediction.replace('___', ' ').replace('_', ' ')}</h3>
               </div>
             )}
 
-            {loadingPrediction && (
-              <div className="text-center mt-3">
-                <h4>Loading ... </h4>
-              </div>
-            )}
-
-            <hr />
+            <hr/>
 
             {/* results display */}
             {results.length > 0 && (
@@ -260,7 +251,9 @@ function App() {
               </>
             )}
 
-            {loadingChatGPT && <CircularProgress color="secondary" />}
+            {loadingChatGPT && (
+              <CircularProgress color="secondary" />
+            )}
           </div>
         </div>
       </div>
@@ -268,4 +261,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
